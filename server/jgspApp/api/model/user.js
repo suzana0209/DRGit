@@ -32,7 +32,7 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    role: {
+    userType: {
         type: String,
         required: true
     },

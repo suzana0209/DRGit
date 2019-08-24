@@ -13,3 +13,10 @@ module.exports.profileRead = function(req, res)
         });
     }
 };
+
+module.exports.getUserData = function(req,res){
+    User.findById(req.payload.email).exec(function(err,user){
+        res.status(200).json(user);
+    })
+}
+

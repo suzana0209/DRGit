@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost/JGSP_DB';
+var dbURI = 'mongodb://localhost/JGSP_DB1';
 
 if(process.env.NODE_ENV === 'production'){
     dbURI = process.env.MONGOLAB_URI;
@@ -47,3 +47,5 @@ process.on('SIGTERM', function() {
 
 require('./user');
 require('./passengerType');
+require('./station');
+require('./line');
