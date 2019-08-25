@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Line = mongoose.model('line');
-var ST = mongoose.model('station');
+var Station = mongoose.model('station');
 
 
 module.exports.deleteLine = function(req, res)
@@ -29,7 +29,7 @@ module.exports.changeLine = function(req, res){
         });
         return;
     }
-    const nest = { regularNumber : req.body.RegularNumber, stations: req.body.Stations}
+    const nest = { regularNumber : req.body.RegularNumber, stations: req.body.ListOfStations}
     Line.findOneAndUpdate({_id : req.params._id}, nest).then(bla => {
         res.status(200).json({
             "message" : "Station successfully updated."
@@ -42,31 +42,31 @@ module.exports.changeLine = function(req, res){
 module.exports.getAllLines = function(req,res)
 {
     Line.find().exec().then(type => { res.send(type);});
+    console.log("linije:", type);
+
 }
+
+
+
+
 
 
 
 module.exports.addLine = function(req, res)
 {
-    if(!req.body.RegularNumber || !req.body.ColorLine || req.body.Stations<=1 ) {
-        sendJSONresponse(res, 400, {
-            "message": "All fields required"
-        });
-        return;
+    if(!req.body.RegularNumber || !req.body.ColorLine || req.body.ListOfStations <= 1 ) {
+        return  res.status(400).json({message: "All fields required"});
     }
 
     var line = new Line();
 
-    line.RegularNumber = req.body.RegularNumber;
+    line.regularNumber = req.body.RegularNumber;
     line.colorLine = req.body.ColorLine;
 
     var stat = [];
-    req.body.Stations.forEach(function(element) {
+    req.body.ListOfStations.forEach(function(element) {
 
         line.stations.push(element.Id);
-    //     ST.findOne({_id: element.Id}).then(bla => {
-    //         line.stations.push(bla.id);
-    //   });
     });
 
     line.save(function(err){
@@ -79,7 +79,7 @@ module.exports.addLine = function(req, res)
         res.status(200).json({
             "message" : "Station successfully added."
         });
-    
+        
     });
 
 
