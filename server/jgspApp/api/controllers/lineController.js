@@ -23,7 +23,7 @@ module.exports.deleteLine = function(req, res)
 
 
 module.exports.changeLine = function(req, res){
-    if(!req.params._id ||  !req.body.RegularNumber || !req.body.ColorLine || req.body.Stations.length<=1 ) {
+    if(!req.params._id ||  !req.body.RegularNumber || !req.body.ColorLine || req.body.ListOfStations.length<=1 ) {
         sendJSONresponse(res, 400, {
             "message": "All fields required"
         });
@@ -32,7 +32,7 @@ module.exports.changeLine = function(req, res){
     const nest = { regularNumber : req.body.RegularNumber, stations: req.body.ListOfStations}
     Line.findOneAndUpdate({_id : req.params._id}, nest).then(bla => {
         res.status(200).json({
-            "message" : "Station successfully updated."
+            "message" : "Line successfully updated."
         });
     })
 
