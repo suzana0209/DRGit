@@ -7,9 +7,10 @@ module.exports.deleteStation = function(req, res)
     
     if(!req.params._id ) {
         sendJSONresponse(res, 400, {
-            "message": "All fields required"
+            "message": "all fields must be filled in"
         });
         return;
+
     }
 
     Station.findOneAndRemove({_id: req.params._id}).then(bla =>{
@@ -61,14 +62,19 @@ module.exports.getAllStations = function(req, res)
 };
 
 
-module.exports.addStation = function(req, res)
-{
+module.exports.addStation = function(req, res){
     if(!req.body.Name || !req.body.AddressStation || !req.body.Latitude || !req.body.Longitude ) {
-        sendJSONresponse(res, 400, {
-            "message": "All fields required"
-        });
-        return;
+        return res.status(400).json({ "message": "You must complete all the fields!"});
     }
+
+    let d = req.body.Name.charAt(0);
+    if((req.body.Name.charAt(0)) >= "0" && (req.body.Name.charAt(0)) <= "9"){
+        return res.status(400).json({ "message": "The station name cannot start with a number!"});
+    }
+
+    // if((d < "A" && d > "Z") || (d < "a" && d > "z")){
+    //     return res.status(400).json({ "message": "The station name must begin with a letter!"});
+    // }
 
     var station = new Station();
 
@@ -81,14 +87,14 @@ module.exports.addStation = function(req, res)
     
 
     station.save(function(err){
-        if(err)
-        {
-            res.status(404).json(err);
-            return;
+        if(err) {
+            return res.status(404).json({ "message": err})
+            // res.status(404).json(err);
+            // return;
         }
 
         res.status(200).json({
-            "message" : "Station successfully added."
+            "message" : "Station successfully added!"
         });
     });
 

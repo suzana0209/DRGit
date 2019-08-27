@@ -7,10 +7,11 @@ module.exports.deleteLine = function(req, res)
 {
     
     if(!req.params._id ) {
-        sendJSONresponse(res, 400, {
-            "message": "All fields required"
-        });
-        return;
+        // sendJSONresponse(res, 400, {
+        //     "message": "All fields required"
+        // });
+        // return;
+        return res.status(400).json({ "message": "You must complete all the fields!"})
     }
 
     Line.findOneAndRemove({_id: req.params._id}).then(bla =>{

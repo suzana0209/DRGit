@@ -11,15 +11,19 @@ var ctrlAuth = require('../controllers/authentication');
 var ctrlPassengerType = require('../controllers/passengerTypeController');
 var ctrlStation = require('../controllers/stationController');
 var ctrlLine = require('../controllers/lineController');
+var ctrlPricelist = require('../controllers/pricelistController');
 
 
-router.get('/profile', auth, ctrlProfile.profileRead);
+
 
 router.post('/register', ctrlAuth.register);
 router.post('/logIn', ctrlAuth.logIn);
+router.get('/getUserData', ctrlAuth.getUserData);
 
 router.get('/getPassengerTypes',  ctrlPassengerType.findAllPassengerType);
+
 router.get('/getUserData', auth, ctrlProfile.getUserData);
+router.get('/profile', auth, ctrlProfile.profileRead);
 
 router.post('/addStation', ctrlStation.addStation);
 //router.get('getAllStations', ctrlStation.getAllStations);
@@ -32,5 +36,6 @@ router.get('/getAllLines', ctrlLine.getAllLines);
 router.post('/changeLine/:_id',ctrlLine.changeLine);
 router.delete('/deleteLine/:_id', ctrlLine.deleteLine);
 
+router.post('/addPricelist', ctrlPricelist.addPricelist);
 
 module.exports = router;

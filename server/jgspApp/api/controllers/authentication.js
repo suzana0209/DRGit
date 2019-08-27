@@ -13,10 +13,11 @@ module.exports.register = function(req, res)
 {
     if(!req.body.name || !req.body.email || !req.body.password || !req.body.lastName
         || !req.body.city || !req.body.number || !req.body.street || !req.body.userType || !req.body.birthday) {
-        sendJSONresponse(res, 400, {
-            "message": "All fields required"
-        });
-        return;
+        // sendJSONresponse(res, 400, {
+        //     "message": "All fields required"
+        // });
+        // return;
+        return res.status(400).json({ "message": "You must complete all the fields!"})
     }
 
     var user = new User();
@@ -97,3 +98,20 @@ module.exports.logIn = function(req, res){
         }
     })(req,res);
 };
+
+module.exports.getUserData = function(req,res){
+
+    if(!req.query.parami){
+        return res.status(400).json({ "message": "Don't exist user !"});
+    }
+    
+    User.find({email: req.query.parami}).exec().then(u=>{
+        var retUser = null;
+        if(u){
+            retUser = u;
+        }
+        res.send(retUser)
+        
+    })
+}
+
