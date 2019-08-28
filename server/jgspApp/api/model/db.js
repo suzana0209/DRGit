@@ -105,3 +105,5 @@ require('./line');
 //require('./ticketType')
 require('./pricelist')
 require('./ticketPrices')
+require('./vehicle')
+require('./timetable');

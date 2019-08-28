@@ -12,7 +12,7 @@ var ctrlPassengerType = require('../controllers/passengerTypeController');
 var ctrlStation = require('../controllers/stationController');
 var ctrlLine = require('../controllers/lineController');
 var ctrlPricelist = require('../controllers/pricelistController');
-
+var ctrlVehicle = require('../controllers/vehicleController');
 
 
 
@@ -37,5 +37,9 @@ router.post('/changeLine/:_id',ctrlLine.changeLine);
 router.delete('/deleteLine/:_id', ctrlLine.deleteLine);
 
 router.post('/addPricelist', ctrlPricelist.addPricelist);
+router.get('/getPricelist', ctrlPricelist.getPricelist);
+router.get('/getTicketPrices', ctrlPricelist.getTicketPrices);
+
+router.post('/addVehicle', ctrlVehicle.addVehicle);
 
 module.exports = router;
