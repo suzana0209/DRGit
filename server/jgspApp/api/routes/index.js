@@ -57,9 +57,20 @@ router.post('/addTimetable', ctrlTimetable.addTimetable);
 router.get('/getAwaitingAdmins', ctrlVerifyUser.getAwaitingAdmins);
 router.get('/getAwaitingControllers', ctrlVerifyUser.getAwaitingControllers);
 router.get('/getAwaitingAppUsers', ctrlVerifyUser.getAwaitingAppUsers);
+router.get('/getDeniedUsers', ctrlVerifyUser.getDeniedUsers);
 
 router.post('/autorizeAdmin', ctrlVerifyUser.autorizeAdmin);
 router.post('/authorizeController', ctrlVerifyUser.authorizeController);
+router.post('/authorizeAppUser', ctrlVerifyUser.authorizeAppUser);
+router.post('/denyAdmin', ctrlVerifyUser.denyAdmin);
+router.post('/denyController', ctrlVerifyUser.denyController);
+router.post('/denyAppUser', ctrlVerifyUser.denyAppUser);
+router.post('/authorizeDeniedUser', ctrlVerifyUser.authorizeDeniedUser);
+
+
+
+
+
 
 
 module.exports = router;

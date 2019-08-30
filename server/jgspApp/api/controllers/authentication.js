@@ -164,4 +164,3 @@ module.exports.getUserData = function(req,res){
         res.send(retUser); 
     })
 }
-
