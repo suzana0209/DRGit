@@ -41,7 +41,9 @@ var userSchema = new mongoose.Schema({
         required: true
     },
     image: {
-        type: String,
+        //type: Buffer,
+        data:Buffer,
+        contentType: String,
         required: false
     },
     passengerType: {
@@ -76,6 +78,7 @@ userSchema.methods.generateJwt = function() {
         city: this.city,
         number: this.number,
         street: this.street,
+        userType: this.userType,
         exp: parseInt(expiry.getTime() / 1000),
     }, "MY_SECRET");
 };

@@ -13,17 +13,22 @@ var ctrlStation = require('../controllers/stationController');
 var ctrlLine = require('../controllers/lineController');
 var ctrlPricelist = require('../controllers/pricelistController');
 var ctrlVehicle = require('../controllers/vehicleController');
+var ctrlDayType = require('../controllers/dayTypeController');
+var ctrlTimetable = require('../controllers/timetableController');
 
 
 
 router.post('/register', ctrlAuth.register);
 router.post('/logIn', ctrlAuth.logIn);
 router.get('/getUserData', ctrlAuth.getUserData);
+router.post('/editPassword', ctrlAuth.editPassword);
+router.post('/edit', ctrlAuth.edit);
 
 router.get('/getPassengerTypes',  ctrlPassengerType.findAllPassengerType);
 
-router.get('/getUserData', auth, ctrlProfile.getUserData);
+//router.get('/getUserData', auth, ctrlProfile.getUserData);
 router.get('/profile', auth, ctrlProfile.profileRead);
+router.post('/resendRequest', ctrlProfile.resendRequest);
 
 router.post('/addStation', ctrlStation.addStation);
 //router.get('getAllStations', ctrlStation.getAllStations);
@@ -41,5 +46,11 @@ router.get('/getPricelist', ctrlPricelist.getPricelist);
 router.get('/getTicketPrices', ctrlPricelist.getTicketPrices);
 
 router.post('/addVehicle', ctrlVehicle.addVehicle);
+router.get('/getAllVehicle', ctrlVehicle.getAllVehicle);
+router.delete('/deleteVehicle/:_id', ctrlVehicle.deleteVehicle);
+
+router.get('/getAllDayTypes', ctrlDayType.getAllDayTypes);
+
+router.post('/addTimetable', ctrlTimetable.addTimetable);
 
 module.exports = router;
