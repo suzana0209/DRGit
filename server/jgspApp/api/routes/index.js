@@ -15,6 +15,7 @@ var ctrlPricelist = require('../controllers/pricelistController');
 var ctrlVehicle = require('../controllers/vehicleController');
 var ctrlDayType = require('../controllers/dayTypeController');
 var ctrlTimetable = require('../controllers/timetableController');
+var ctrlVerifyUser = require('../controllers/verifyControllers');
 
 
 
@@ -52,5 +53,13 @@ router.delete('/deleteVehicle/:_id', ctrlVehicle.deleteVehicle);
 router.get('/getAllDayTypes', ctrlDayType.getAllDayTypes);
 
 router.post('/addTimetable', ctrlTimetable.addTimetable);
+
+router.get('/getAwaitingAdmins', ctrlVerifyUser.getAwaitingAdmins);
+router.get('/getAwaitingControllers', ctrlVerifyUser.getAwaitingControllers);
+router.get('/getAwaitingAppUsers', ctrlVerifyUser.getAwaitingAppUsers);
+
+router.post('/autorizeAdmin', ctrlVerifyUser.autorizeAdmin);
+router.post('/authorizeController', ctrlVerifyUser.authorizeController);
+
 
 module.exports = router;
