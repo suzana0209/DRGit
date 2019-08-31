@@ -71,6 +71,8 @@ router.get('/priceForPaypal', ctrlTicket.priceForPaypal);
 router.post('/postPayPalModel', ctrlTicket.postPayPalModel);
 
 router.post('/getTicketWithCurrentAppUser', ctrlTicket.getTicketWithCurrentAppUser);
+router.post('/validateTicket/:idTicket', ctrlTicket.validateTicket);
+router.post('/getNameOfCustomer', ctrlTicket.getNameOfCustomer);
 
 
 

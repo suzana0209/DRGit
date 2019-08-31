@@ -50,8 +50,8 @@ module.exports.priceForPaypal = function(req,res){
             var proc = 0;
            
             User.find({email: req.query.par}).exec().then(aa=>{
-                
-                if(aa){
+                //par1 : NEREGISTROVANI
+                if(aa && req.query.par1 == ""){
                     
                     aa.forEach(elem=>{
                         PT.findById(elem.passengerType).exec().then(pt=>{
@@ -62,6 +62,9 @@ module.exports.priceForPaypal = function(req,res){
                         //return ret;
                     })
                 
+                }
+                else{
+                    res.send(onlyPrice.toString());
                 }
          
             })
@@ -100,11 +103,16 @@ module.exports.postPayPalModel = function(req,res){
         ticket.payPal = payPal._id;
         ticket.name = "karta";
         ticket.ticketType = req.body.typeOfTicket;
-        ticket.purchaseTime = new Date(req.body.dateOfPurchase.toString());
+        let pomDate =  new Date(req.body.dateOfPurchase.toString());
+        //pomDate.setHours(pomDate.getHours() + 2); u bazu se upise -2 sata, ali kad se iscita dobije se tacno vrijeme(dodaju se dva sata) - ovo za sada ne treba
+        ticket.purchaseTime = pomDate;
+
+        //ticket.purchaseTime.setHours(getHours() + 2);
+        //ddd.setHours(dd.getHours() -1);
         ticket.priceOfTicket = parseFloat(req.body.value);
 
         User.findOne({email: req.body.email}).then(uss=>{
-            if(uss){
+            if(uss && req.body.nereg == ""){
                 ticket.user = uss._id;
                 // ticket.ticketType = req.body.typeOfTicket;
                 // ticket.purchaseTime = new Date(req.body.dateOfPurchase.toString());
@@ -180,6 +188,191 @@ module.exports.getTicketWithCurrentAppUser = function(req,res){
     }
 }
 
+module.exports.validateTicket = function(req, res){
+
+    if(req.params.idTicket == undefined || req.params.idTicket == ""){
+        return res.status(400).json({"message": "You have to fill email address!"});
+    }
+
+    Ticket.findOne({_id: req.params.idTicket}).then(tck=>{
+        if(!tck){
+            let msg = "Ticket with id= " +req.params.idTicket+ " doesn't exist !";
+            return res.status(400).json({"message": msg});
+        }
+        else{
+            var dateOfTicket = new Date(tck.purchaseTime);
+            var today = new Date();
+
+            if(tck.ticketType == "Hourly"){
+                let addOneHour = dateOfTicket.setHours(dateOfTicket.getHours() + 1);
+                if(today > addOneHour){
+                    let s = "Ticket with id '" + req.params.idTicket + "' is not valid. Time is up!"
+                        return res.status(400).json({"message": s});
+                }
+                else{
+                    let s = "Ticket with id '" + req.params.idTicket + "' is valid!"
+                    return res.status(200).json({"message": s});
+                }
+            }
+            else if(tck.ticketType == "Daily"){
+                let addOneDay = dateOfTicket.setDate(dateOfTicket.getDate() + 1);
+                dateOfTicket.setHours(0,0,0,0);
+                if(today > addOneDay){
+                    let s = "Ticket with id '" + req.params.idTicket + "' is not valid. Time is up!"
+                        return res.status(400).json({"message": s});
+                }
+                else{
+                    let s = "Ticket with id '" + req.params.idTicket + "' is valid!"
+                    return res.status(200).json({"message": s});
+                }
+            }
+            else if(tck.ticketType == "Monthly"){
+                //let addOneMonth = dateOfTicket.setMonth(dateOfTicket.getMonth() + 1);
+                //dateOfTicket1.setDate(1);
+                //dateOfTicket1.setHours(0,0,0,0);
+
+                if(today.getFullYear() == dateOfTicket.getFullYear() && today.getMonth() == dateOfTicket.getMonth()){
+                    let s = "Ticket with id '" + req.params.idTicket + "' is valid!"
+                    return res.status(200).json({"message": s});
+                    
+                }
+                else{
+                    let s = "Ticket with id '" + req.params.idTicket + "' is not valid. Time is up!"
+                        return res.status(400).json({"message": s});
+                }
+            }
+            else if(tck.ticketType == "Yearly"){
+                if(today.getFullYear() == dateOfTicket.getFullYear()){
+                    let s = "Ticket with id '" + req.params.idTicket + "' is valid!"
+                    return res.status(200).json({"message": s});
+                }
+                else{
+                    let s = "Ticket with id '" + req.params.idTicket + "' is not valid. Time is up!"
+                        return res.status(400).json({"message": s});
+                }
+            }
+            
+        }
+    })
+}
+
+module.exports.getNameOfCustomer = function(req,res){
+    if(!req.body.idTickett){
+        return res.status(400).json({"message": "Required ticket ID!"});
+    }
+    var ret = "";
+    Ticket.findOne({_id: req.body.idTickett}).then(tt=>{
+        if(!tt){
+            return res.status(400).json({"message": "Ticket doesn't exist!"});
+        }
+        else{
+            if(tt.user == null){
+                ret = "unregister";
+                res.send(ret);
+            }
+            else{
+                User.findOne({_id: tt.user}).then(u=>{
+                    if(u){
+                        ret = u.name;
+                        res.send(ret);
+                    }
+                })
+            }
+        }
+    })
+}
+
+
+// module.exports.validateTicket = function(req, res){
+
+//     if(req.params.email == undefined || req.params.email == ""){
+//         return res.status(400).json({"message": "You have to fill email address!"});
+//     }
+//     User.findOne({email : req.params.email}).then(aa => {
+//         if(aa != null && aa != undefined){
+//         if(aa._id != req.body.user)
+//         {
+//             let s = "User with email: " + req.params.email + " did not buy ticket with Id: " + req.body._id;
+//             return res.status(400).json({"message": s});
+//         }else {
+//             var dd = (new Date(req.body.purchaseTime));
+//             var today = new Date();
+//             TicketType.findById(req.body.ticketType).then(tt => {
+//                 if(tt.name == "Hourly"){
+//                     var ddd = (new Date(req.body.purchaseTime));
+//                     ddd.setHours(dd.getHours() -1);
+//                     if(ddd < today)
+//                     {
+//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                         return res.status(400).json({"message": s});
+//                     }else{
+//                         let s = "Ticket with id '" + req.body._id + "' is valid!"
+//                         return res.status(200).json({"message": s});
+//                     }
+//                 }else if(tt.name == "Daily")
+//                 {
+//                     if(dd.getFullYear() < today.getFullYear())
+//                     {
+//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                         return res.status(400).json({"message": s});
+//                     }else if(dd.getFullYear() == today.getFullYear()) {
+//                         if(dd.getMonth() < today.getMonth()){
+//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                         return res.status(400).json({"message": s});
+//                         }else if(dd.getMonth() == today.getMonth())
+//                         {
+//                             if(dd.getDate() == today.getDate())
+//                             {
+//                                 let s = "Ticket with id '" + req.body._id + "' is valid!"
+//                                 return res.status(200).json({"message": s});
+//                             }else{
+//                                 let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                                 return res.status(400).json({"message": s});
+//                             }
+//                         }
+                        
+//                     }
+//                 }else if(tt.name == "Monthly")
+//                 {
+//                     if(dd.getFullYear() < today.getFullYear())
+//                     {
+//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                         return res.status(400).json({"message": s});
+//                     }else if(dd.getFullYear() == today.getFullYear()) {
+//                         if(dd.getMonth() == today.getMonth())
+//                         {
+//                             let s = "Ticket with id '" + req.body._id + "' is valid!"
+//                             return res.status(200).json({"message": s});
+//                         }
+//                         else{
+//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                             return res.status(400).json({"message": s});
+//                         }
+//                     }
+//                 }else if(tt.name == "Yearly"){
+//                     if(dd.getFullYear() == today.getFullYear())
+//                     {
+
+//                      let s = "Ticket with id '" + req.body._id + "' is valid!"
+//                             return res.status(200).json({"message": s});
+//                     }
+//                     else{
+//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
+//                             return res.status(400).json({"message": s});
+//                     }
+//                 }
+//             });
+//         }
+//     }else {
+//         let s = "User with email: " + req.params.email + " did not buy ticket with Id: " + req.body._id;
+//             return res.status(400).json({"message": s});
+//     }
+//     })
+
+// }
+
+
+
 function checkAdult(age) {
     var today = new Date();
     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && age.fromTime.getDate() <= today.getDate())
@@ -190,3 +383,4 @@ function checkAdult(age) {
         }
     }
 }
+
