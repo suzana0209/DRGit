@@ -20,6 +20,38 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var io = require('socket.io')(server);
+
+var stations = [];
+var i = 0;
+
+io.on('connection', (socket)=>{
+  socket.on('recive', message => {
+    this.stations = message;
+    console.log(this.stations);
+    console.log(`Received message => ${message}`);
+  });
+
+  socket.on('send', aa=>{
+    console.log("Stations: ", this.stations);
+
+    if(this.stations != []){
+      setInterval(() => {
+        var value = [];
+        if(i == this.stations.length){
+          i = 0;
+        }
+
+        value.push(this.stations[i].longitude);
+        value.push(this.stations[i].latitude);
+        i++;
+
+        console.log('Emmiting value: ' + value);
+        socket.emit('data', {data: value});
+      },5000);
+    }
+  })
+})
 
 /**
  * Listen on provided port, on all network interfaces.
