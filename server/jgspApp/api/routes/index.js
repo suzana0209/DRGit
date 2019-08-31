@@ -16,7 +16,7 @@ var ctrlVehicle = require('../controllers/vehicleController');
 var ctrlDayType = require('../controllers/dayTypeController');
 var ctrlTimetable = require('../controllers/timetableController');
 var ctrlVerifyUser = require('../controllers/verifyControllers');
-
+var ctrlTicket = require('../controllers/ticketController');
 
 
 router.post('/register', ctrlAuth.register);
@@ -67,9 +67,10 @@ router.post('/denyController', ctrlVerifyUser.denyController);
 router.post('/denyAppUser', ctrlVerifyUser.denyAppUser);
 router.post('/authorizeDeniedUser', ctrlVerifyUser.authorizeDeniedUser);
 
+router.get('/priceForPaypal', ctrlTicket.priceForPaypal);
+router.post('/postPayPalModel', ctrlTicket.postPayPalModel);
 
-
-
+router.post('/getTicketWithCurrentAppUser', ctrlTicket.getTicketWithCurrentAppUser);
 
 
 

@@ -107,3 +107,5 @@ require('./pricelist')
 require('./ticketPrices')
 require('./vehicle')
 require('./timetable');
+require('./ticket');
+require('./payPal');
