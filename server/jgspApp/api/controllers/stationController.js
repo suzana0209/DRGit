@@ -40,13 +40,21 @@ module.exports.changeStation = function(req, res){
         });
         return;
     }
-    const nest = { address : req.body.Address, name : req.body.Name, latitude : req.body.Latitude, longitude: req.body.Longitude}
-    Station.findOneAndUpdate({_id : req.body.Id}, nest).then(bla => {
-        res.status(200).json({
-            "message" : "Station successfully updated."
-        });
-    })
 
+    Station.findById(req.body.Id).exec().then(st=>{
+        if(st.__v != req.body.Version){
+            return res.status(400).json({"message":"You are trying to change station that has been changed recently"});
+        }
+        else{
+            var vers = req.body.Version + 1;
+            const nest = { address : req.body.Address, name : req.body.Name, latitude : req.body.Latitude, longitude: req.body.Longitude, __v: vers}
+            Station.findOneAndUpdate({_id : req.body.Id}, nest).then(bla => {
+                res.status(200).json({
+                "message" : "Station successfully changed!"
+                });
+            })
+        }
+    })
 }
 
 module.exports.getAllStations = function(req, res)
