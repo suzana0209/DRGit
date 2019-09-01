@@ -13,14 +13,14 @@ function(username,password, done){
         if(!user) 
         {
             return done(null, false, {
-                message: 'User not found'
+                message: 'User not found!'
             });
         }
 
         if(!user.validPassword(password))
         {
             return done(null,false, {
-                message: 'Password is wrong'
+                message: 'The password is wrong!'
             });
         }
         return done(null, user);
