@@ -53,6 +53,9 @@ router.delete('/deleteVehicle/:_id', ctrlVehicle.deleteVehicle);
 router.get('/getAllDayTypes', ctrlDayType.getAllDayTypes);
 
 router.post('/addTimetable', ctrlTimetable.addTimetable);
+router.get('/getAllTimetable', ctrlTimetable.getAllTimetable);
+router.post('/changeTimetable', ctrlTimetable.changeTimetable);
+router.delete('/deleteTimetable/:_id', ctrlTimetable.deleteTimetable);
 
 router.get('/getAwaitingAdmins', ctrlVerifyUser.getAwaitingAdmins);
 router.get('/getAwaitingControllers', ctrlVerifyUser.getAwaitingControllers);
