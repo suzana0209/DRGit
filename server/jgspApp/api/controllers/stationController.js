@@ -27,7 +27,7 @@ module.exports.deleteStation = function(req, res)
             })
         })
         res.status(200).json({
-            "message" : "Station successfully removed."
+            "message" : "Station successfully deleted!"
     });
 });
 }
@@ -57,16 +57,9 @@ module.exports.changeStation = function(req, res){
     })
 }
 
-module.exports.getAllStations = function(req, res)
-{
-    var types = [];
-    
+module.exports.getAllStations = function(req, res){
     Station.find().exec().then(type => { res.send(type);});
-   console.log(type);
-    // var types = [];
-    
-    // Station.find().exec().then(type => { res.send(type);});
-    // console.log(type);
+    //console.log(type); 
 };
 
 
@@ -75,37 +68,37 @@ module.exports.addStation = function(req, res){
         return res.status(400).json({ "message": "You must complete all the fields!"});
     }
 
-    let d = req.body.Name.charAt(0);
     if((req.body.Name.charAt(0)) >= "0" && (req.body.Name.charAt(0)) <= "9"){
-        return res.status(400).json({ "message": "The station name cannot start with a number!"});
+        return res.status(400).json({ "message": "The station name can't start with a number!"});
     }
 
-    // if((d < "A" && d > "Z") || (d < "a" && d > "z")){
-    //     return res.status(400).json({ "message": "The station name must begin with a letter!"});
-    // }
-
-    var station = new Station();
-
-    station.name = req.body.Name;
-    station.addressStation = req.body.AddressStation;
-    station.latitude = req.body.Latitude;
-    station.longitude = req.body.Longitude;
-    //user.image = req.body.image;
-    //user.activated = req.body.activated;
-    
-
-    station.save(function(err){
-        if(err) {
-            return res.status(404).json({ "message": err})
-            // res.status(404).json(err);
-            // return;
+    Station.findOne({name: req.body.Name}).then(st=>{
+        if(st){
+            return res.status(400).json({"message": "Station name "+ req.body.Name+" already exists"})
         }
+        else{
+            Station.findOne({addressStation: req.body.AddressStation}).then(st1=>{
+                if(st1){
+                    return res.status(400).json({"message": "On address "+req.body.AddressStation+" already exists station!"})
+                }
+                else{
+                    var station = new Station();
 
-        res.status(200).json({
-            "message" : "Station successfully added!"
-        });
-    });
-
-
-
+                    station.name = req.body.Name;
+                    station.addressStation = req.body.AddressStation;
+                    station.latitude = req.body.Latitude;
+                    station.longitude = req.body.Longitude;
+        
+                    station.save(function(err){
+                        if(err) {
+                            return res.status(404).json({ "message": err})
+                        }
+        
+                        return res.status(200).json({"message" : "Station successfully added!"});
+                    });
+                }
+            })
+           
+        }
+    })
 };
