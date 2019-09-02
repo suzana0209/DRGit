@@ -26,7 +26,7 @@ module.exports.addTimetable = function(req,res){
 
        
         Timetable.findOneAndUpdate({_id: req.body.Idd}, nesto).then(data=>{
-            return res.status(200).json({"message":"Succ add!"})
+            return res.status(200).json({"message":"Timetable successfully added!"})
         }) 
     }
     else{
@@ -53,7 +53,7 @@ module.exports.addTimetable = function(req,res){
                     const nestoo = {timetables: list};
 
                     Vehicle.findByIdAndUpdate({_id: req.body.VehicleId}, nestoo).then(data=>{
-                        res.status(200).json({"message": "Timetable succ added!"})
+                        res.status(200).json({"message": "Timetable successfully added!"})
                     })
                 })
             })
@@ -65,7 +65,7 @@ module.exports.addTimetable = function(req,res){
 
 module.exports.changeTimetable = function(req,res){
     if(!req.body.LineId || !req.body.DayId || !req.body.Idd){
-        res.status(400).json({"message":"All filds must be field in!"})
+        res.status(400).json({"message":"You must complete all the fields!!"})
     }
 
     //console.log(string.indexOf(substring) !== -1);
@@ -81,14 +81,14 @@ module.exports.changeTimetable = function(req,res){
     });
 
     if(count == 2){
-        res.status(400).json({"message":"Departure "+ req.body.TipDodavanja +" already exist in db !"})
+        res.status(400).json({"message":"Departure "+ req.body.TipDodavanja +" already exist in database!"})
     }
 
     const nesto = {departures: req.body.Departures};
 
        
     Timetable.findOneAndUpdate({_id: req.body.Idd}, nesto).then(data=>{
-        return res.status(200).json({"message":"Succ add!"})
+        return res.status(200).json({"message":"Timetable successfully changed!"})
     }) 
 
    

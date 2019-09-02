@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Pricelist = mongoose.model('pricelist');
 var TicketPrices = mongoose.model('ticketPrices');
+var PassengerType = mongoose.model('passengerType');
 
 module.exports.addPricelist = function(req,res){
     if(!req.body.Hourly || !req.body.Daily || !req.body.Monthly || !req.body.Yearly || !req.body.PriceList.FromTime 
@@ -32,50 +33,141 @@ module.exports.addPricelist = function(req,res){
     })
 };
 
-// module.exports.getPricelist = function(req,res){
-//     Pricelist.find().exec().then(pl=>{
-//         var idTicketPrices = [];
-//         var idTP;
-//         var pList = pl.reverse();
-//         let today = new Date();
-//         pList.forEach(elem=>{
-//             if(today >= elem.fromTime && today <= elem.toTime){
-//                 //idTicketPrices.push(elem);
-//                 idTP.fromTime = elem.fromTime;
-//                 TicketPrices.find({_id: elem.ticketPrices}).exec().then(aa=>{
-//                     idTicketPrices.hourly = aa.hourly;
 
-//                 })
-//             }
+
+
+// module.exports.getPricelist = function(req,res){
+//     Pricelist.find().exec().then(pp=>{
+//         var lala = pp.reverse();
+//         var ret = [];
+//         ret = lala.find(checkAdult);
+
+//         TicketPrices.find().exec().then(pr=>{
+//             pr.forEach(element=>{
+//                 if(element.id == ret.ticketPrices._id){
+//                    ret.ticketPrices = element.id; 
+//                 }
+//             })
+//             res.send(ret);
 //         })
-//         res.send(idTicketPrices);
 //     })
 // }
 
-module.exports.getPricelist = function(req,res){
-    Pricelist.find().exec().then(pp=>{
-        var lala = pp.reverse();
+// function checkAdult(age) {
+//     var today = new Date();
+//     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && 
+//     age.fromTime.getDate() <= today.getDate())
+//     {
+//         if(age.toTime.getFullYear() >= today.getFullYear()) 
+//         {
+//             if( age.toTime.getMonth()> today.getMonth()){
+//                 return age;
+//             }
+//             else if(age.toTime.getMonth() == today.getMonth())
+//             {
+//                 if( age.toTime.getDate() >= today.getDate()){
+//                     return age;
+//                 }
+//             }
+            
+//         }
+//     }
+// }
 
-        var ret = lala.find(checkAdult);
+/*
+fd.append('PassengerType', this.selectedPassanger);
+    fd.append('SelectedTicket', this.selectedTicket);
+    fd.append('IdOfPriceList', this.pomPricelist._id);
+*/
+module.exports.calculatePrice = function(req,res){
+    if(!req.body.PassengerType || !req.body.SelectedTicket || !req.body.IdOfPriceList){
+        return res.status(400).json({"message": "You must complete all the fields!"})
+    }
 
-        TicketPrices.find().exec().then(pr=>{
-            pr.forEach(element=>{
-                if(element.id == ret.ticketPrices._id){
-                   ret.ticketPrices = element.id; 
+    Pricelist.findOne({_id: req.body.IdOfPriceList}).then(pl=>{
+        if(!pl){
+            return res.status(400).json({"message": "Not found pricelist!"})
+        }
+        else{
+            TicketPrices.findOne({_id: pl.ticketPrices}).then(tk=>{
+                if(tk){
+                    PassengerType.find({name: req.body.PassengerType}).then(pt=>{
+                        if(pt){
+                            //var kon;
+                            //var onlyPrice = 0;
+                            pt.forEach(ptt=>{
+                                let coeff = ptt.coefficient;
+                                let onlyPrice;
+                                
+                                if(req.body.SelectedTicket == 'Hourly'){
+                                    onlyPrice = tk.hourly;
+                                }
+                                else if(req.body.SelectedTicket == 'Daily'){
+                                    onlyPrice = tk.daily;
+                                }
+                                else if(req.body.SelectedTicket == 'Monthly'){
+                                    onlyPrice = tk.monthly;
+                                }
+                                else if(req.body.SelectedTicket == 'Yearly'){
+                                    onlyPrice = tk.yearly;
+                                }
+                                let kon = onlyPrice - (onlyPrice * coeff);
+                                res.send(kon.toString());
+                            })
+                            //res.send(kon);
+                        }
+                        
+                    })
                 }
             })
-            res.send(ret);
-        })
+        }
     })
+}
+
+
+module.exports.getPricelist = function(req, res)
+{
+
+
+     Pricelist.find().exec().then(pric => {
+        var lala = pric.reverse();
+
+        var ret = lala.find(checkAdult);
+        if(ret != null && ret != undefined)
+        {
+            TicketPrices.find().exec().then(pr => {
+                pr.forEach(element => {
+                    if(element._id == ret.ticketPrices._id)
+                    {
+                        ret.ticketPrices.push(element._id);
+                    }
+                });
+                   
+                res.send(ret);
+             });
+        }
+        else{
+            return res.status(404).json({"message": "notFound"});
+        }
+    });
 }
 
 function checkAdult(age) {
     var today = new Date();
     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && age.fromTime.getDate() <= today.getDate())
     {
-        if(age.toTime.getFullYear() >= today.getFullYear() &&  age.toTime.getMonth() >= today.getMonth() && age.toTime.getDate() >= today.getDate())
+        if(age.toTime.getFullYear() >= today.getFullYear()) 
         {
-            return age;
+            if( age.toTime.getMonth()> today.getMonth()){
+                return age;
+            }
+            else if(age.toTime.getMonth() == today.getMonth())
+            {
+                if( age.toTime.getDate() >= today.getDate()){
+                    return age;
+                }
+            }
+            
         }
     }
 }

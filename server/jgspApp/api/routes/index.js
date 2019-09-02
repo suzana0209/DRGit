@@ -45,6 +45,7 @@ router.delete('/deleteLine/:_id', ctrlLine.deleteLine);
 router.post('/addPricelist', ctrlPricelist.addPricelist);
 router.get('/getPricelist', ctrlPricelist.getPricelist);
 router.get('/getTicketPrices', ctrlPricelist.getTicketPrices);
+router.post('/calculatePrice', ctrlPricelist.calculatePrice);
 
 router.post('/addVehicle', ctrlVehicle.addVehicle);
 router.get('/getAllVehicle', ctrlVehicle.getAllVehicle);

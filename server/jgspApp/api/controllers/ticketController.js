@@ -119,6 +119,7 @@ module.exports.postPayPalModel = function(req,res){
                 // ticket.priceOfTicket = parseFloat(req.body.value);
             }
             else{
+                //SLANJE MEJLA
                 ticket.user = null;
             }
                 Pricelist.findOne({_id: req.body.pricelistId}).then(pl=>{
