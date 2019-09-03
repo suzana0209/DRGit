@@ -5,6 +5,7 @@ var PT = mongoose.model('passengerType')
 var Pricelist = mongoose.model('pricelist')
 var TicketPrices = mongoose.model('ticketPrices')
 var PayPal = mongoose.model('payPal')
+var nodemailer = require('nodemailer');
 
 //priceForPaypal: typeOfTicket,email,data
 //req.query.par && req.query.parami
@@ -121,58 +122,25 @@ module.exports.postPayPalModel = function(req,res){
             else{
                 //SLANJE MEJLA
                 ticket.user = null;
+                let dateee = pomDate.toString('GMT')[0];
+                var mailOptions = {
+                    from: 'pusgs2018.19projekat@gmail.com',
+                    to: req.body.email,
+                    subject: 'Ticket purchase',
+                            text: 'Dear ' +  req.body.email + ",\nYour purchase is successfull.\n" + "Ticket type : Hourly \n" + 
+                                "Time of purchase: " + dateee + "\nTicket is valid for the next hour.\n\n" + "Thank you."
+                    };
+                sendMail(mailOptions);
             }
                 Pricelist.findOne({_id: req.body.pricelistId}).then(pl=>{
                     ticket.pricelist = pl._id;
 
                     ticket.save();
-                    res.status(200).json({"message": "OKK"})
-                })
-            
+                    return res.status(200).json({"message": "Ticket successfully bought!"})
+                })           
         })
-
-        // if(req.body.user != null && req.body.user != "" && req.body.user != null){
-        //     ticket.user = req.body.user;
-        // }
-
-        // ticket.name = "karta";
-        // ticket.ticketType = req.body.TypeOfTicket;
-        
-        // Pricelist.findOne({_id: req.body.pricelist}).then(ab=>{
-        //     ticket.pricelist = ab._id;
-
-        //     ticket.purchaseTime.setHours(ticket.purchaseTime.getHours() - 2);
-        //     var dd = ticket.purchaseTime.toString();
-        //     var ddd = dd.split('GMT');
-
-        //     ticket.save();
-
-        // })
-
     });
-
-    //function(err){
-    //     if(err){
-    //         return res.status(404);
-    //     }
-    //     //upisi kartu
-        //res.status(200).json({"message": "Paypal data succesfull inserted in db!"})
-    //})
-    
-
 }
-
-// module.exports.getTicketWithCurrentAppUser = function(req,res){
-//     if(req.body.idd){
-//         var ret = [];
-//         User.findOne({_id: req.body.idd}).then(aa=>{
-//             if(aa){
-//                 ret.push(aa.name);
-//             }
-//             res.send(ret);
-//         })
-//     }
-// }
 
 module.exports.getTicketWithCurrentAppUser = function(req,res){
     if(req.body.idd){
@@ -269,13 +237,15 @@ module.exports.getNameOfCustomer = function(req,res){
         else{
             if(tt.user == null){
                 ret = "unregister";
-                res.send(ret);
+                return res.status(200).json({"message":ret});
+                //return res.send(ret.toString());
             }
             else{
                 User.findOne({_id: tt.user}).then(u=>{
                     if(u){
                         ret = u.name;
-                        res.send(ret);
+                        return res.status(200).json({"message":ret});
+                        //return res.send(ret.toString());
                     }
                 })
             }
@@ -283,105 +253,62 @@ module.exports.getNameOfCustomer = function(req,res){
     })
 }
 
-
-// module.exports.validateTicket = function(req, res){
-
-//     if(req.params.email == undefined || req.params.email == ""){
-//         return res.status(400).json({"message": "You have to fill email address!"});
-//     }
-//     User.findOne({email : req.params.email}).then(aa => {
-//         if(aa != null && aa != undefined){
-//         if(aa._id != req.body.user)
-//         {
-//             let s = "User with email: " + req.params.email + " did not buy ticket with Id: " + req.body._id;
-//             return res.status(400).json({"message": s});
-//         }else {
-//             var dd = (new Date(req.body.purchaseTime));
-//             var today = new Date();
-//             TicketType.findById(req.body.ticketType).then(tt => {
-//                 if(tt.name == "Hourly"){
-//                     var ddd = (new Date(req.body.purchaseTime));
-//                     ddd.setHours(dd.getHours() -1);
-//                     if(ddd < today)
-//                     {
-//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                         return res.status(400).json({"message": s});
-//                     }else{
-//                         let s = "Ticket with id '" + req.body._id + "' is valid!"
-//                         return res.status(200).json({"message": s});
-//                     }
-//                 }else if(tt.name == "Daily")
-//                 {
-//                     if(dd.getFullYear() < today.getFullYear())
-//                     {
-//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                         return res.status(400).json({"message": s});
-//                     }else if(dd.getFullYear() == today.getFullYear()) {
-//                         if(dd.getMonth() < today.getMonth()){
-//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                         return res.status(400).json({"message": s});
-//                         }else if(dd.getMonth() == today.getMonth())
-//                         {
-//                             if(dd.getDate() == today.getDate())
-//                             {
-//                                 let s = "Ticket with id '" + req.body._id + "' is valid!"
-//                                 return res.status(200).json({"message": s});
-//                             }else{
-//                                 let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                                 return res.status(400).json({"message": s});
-//                             }
-//                         }
-                        
-//                     }
-//                 }else if(tt.name == "Monthly")
-//                 {
-//                     if(dd.getFullYear() < today.getFullYear())
-//                     {
-//                         let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                         return res.status(400).json({"message": s});
-//                     }else if(dd.getFullYear() == today.getFullYear()) {
-//                         if(dd.getMonth() == today.getMonth())
-//                         {
-//                             let s = "Ticket with id '" + req.body._id + "' is valid!"
-//                             return res.status(200).json({"message": s});
-//                         }
-//                         else{
-//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                             return res.status(400).json({"message": s});
-//                         }
-//                     }
-//                 }else if(tt.name == "Yearly"){
-//                     if(dd.getFullYear() == today.getFullYear())
-//                     {
-
-//                      let s = "Ticket with id '" + req.body._id + "' is valid!"
-//                             return res.status(200).json({"message": s});
-//                     }
-//                     else{
-//                             let s = "Ticket with id '" + req.body._id + "' is not valid. Time is up!"
-//                             return res.status(400).json({"message": s});
-//                     }
-//                 }
-//             });
-//         }
-//     }else {
-//         let s = "User with email: " + req.params.email + " did not buy ticket with Id: " + req.body._id;
-//             return res.status(400).json({"message": s});
-//     }
-//     })
-
-// }
-
-
-
 function checkAdult(age) {
     var today = new Date();
     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && age.fromTime.getDate() <= today.getDate())
     {
-        if(age.toTime.getFullYear() >= today.getFullYear() &&  age.toTime.getMonth() >= today.getMonth() && age.toTime.getDate() >= today.getDate())
+        if(age.toTime.getFullYear() >= today.getFullYear()) 
         {
-            return age;
+            if( age.toTime.getMonth()> today.getMonth()){
+                return age;
+            }
+            else if(age.toTime.getMonth() == today.getMonth())
+            {
+                if( age.toTime.getDate() >= today.getDate()){
+                    return age;
+                }
+            }
+            
         }
     }
 }
 
+
+// function checkAdult(age) {
+//     var today = new Date();
+//     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && age.fromTime.getDate() <= today.getDate())
+//     {
+//         if(age.toTime.getFullYear() >= today.getFullYear() &&  age.toTime.getMonth() >= today.getMonth() && age.toTime.getDate() >= today.getDate())
+//         {
+//             return age;
+//         }
+//     }
+// }
+
+function sendMail(mailOptions){
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'pusgs2018.19projekat@gmail.com',
+          pass: 'pusgs2019'
+        }
+    });
+      
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } 
+        else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+module.exports.getAllTicket = function(req,res){
+    Ticket.find().exec().then(tt=>{
+        if(tt){
+            res.send(tt);
+        }
+    })
+}

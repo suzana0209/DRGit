@@ -77,7 +77,7 @@ router.post('/postPayPalModel', ctrlTicket.postPayPalModel);
 router.post('/getTicketWithCurrentAppUser', ctrlTicket.getTicketWithCurrentAppUser);
 router.post('/validateTicket/:idTicket', ctrlTicket.validateTicket);
 router.post('/getNameOfCustomer', ctrlTicket.getNameOfCustomer);
-
+router.get('/getAllTicket', ctrlTicket.getAllTicket);
 
 
 module.exports = router;
