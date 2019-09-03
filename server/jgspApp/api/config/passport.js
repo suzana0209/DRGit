@@ -13,7 +13,7 @@ function(username,password, done){
         if(!user) 
         {
             return done(null, false, {
-                message: 'User not found!'
+                message: 'User with email: '+ username +' not found!'
             });
         }
 

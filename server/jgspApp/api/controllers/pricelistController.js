@@ -6,14 +6,22 @@ var PassengerType = mongoose.model('passengerType');
 module.exports.addPricelist = function(req,res){
     if(!req.body.Hourly || !req.body.Daily || !req.body.Monthly || !req.body.Yearly || !req.body.PriceList.FromTime 
         || !req.body.PriceList.ToTime){
-        return res.status(400).json({ "message": "Don't exist user !"});
+        return res.status(400).json({ "message": "You must complete all the fields!"});
+    }
+
+    if(req.body.Hourly == 0 || req.body.Daily == 0 || req.body.Monthly == 0 || req.body.Yearly == 0){
+        return res.status(400).json({ "message": "Ticket price can't be zero!"});
+    }
+
+    if(req.body.Hourly < 0 || req.body.Daily < 0 || req.body.Monthly < 0 || req.body.Yearly < 0){
+        return res.status(400).json({ "message": "Ticket price can't be less than zero!"});
     }
 
    
     var ticketPrices = new TicketPrices();
     ticketPrices.hourly = req.body.Hourly;
     ticketPrices.monthly = req.body.Monthly;
-    ticketPrices.daily = req.body.Daily;
+    ticketPrices.daily = req.body.Daily; 
     ticketPrices.yearly = req.body.Yearly;
 
     ticketPrices.save(function(err){
@@ -34,45 +42,6 @@ module.exports.addPricelist = function(req,res){
 };
 
 
-
-
-// module.exports.getPricelist = function(req,res){
-//     Pricelist.find().exec().then(pp=>{
-//         var lala = pp.reverse();
-//         var ret = [];
-//         ret = lala.find(checkAdult);
-
-//         TicketPrices.find().exec().then(pr=>{
-//             pr.forEach(element=>{
-//                 if(element.id == ret.ticketPrices._id){
-//                    ret.ticketPrices = element.id; 
-//                 }
-//             })
-//             res.send(ret);
-//         })
-//     })
-// }
-
-// function checkAdult(age) {
-//     var today = new Date();
-//     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && 
-//     age.fromTime.getDate() <= today.getDate())
-//     {
-//         if(age.toTime.getFullYear() >= today.getFullYear()) 
-//         {
-//             if( age.toTime.getMonth()> today.getMonth()){
-//                 return age;
-//             }
-//             else if(age.toTime.getMonth() == today.getMonth())
-//             {
-//                 if( age.toTime.getDate() >= today.getDate()){
-//                     return age;
-//                 }
-//             }
-            
-//         }
-//     }
-// }
 
 /*
 fd.append('PassengerType', this.selectedPassanger);
@@ -125,10 +94,7 @@ module.exports.calculatePrice = function(req,res){
 }
 
 
-module.exports.getPricelist = function(req, res)
-{
-
-
+module.exports.getPricelist = function(req, res){
      Pricelist.find().exec().then(pric => {
         var lala = pric.reverse();
 
@@ -147,7 +113,7 @@ module.exports.getPricelist = function(req, res)
              });
         }
         else{
-            return res.status(404).json({"message": "notFound"});
+            return res.status(404).json({"message": "Pricelist not found"});
         }
     });
 }

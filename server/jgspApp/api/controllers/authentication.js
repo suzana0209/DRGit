@@ -64,25 +64,6 @@ module.exports.edit = function(req,res){
             }
         }
     })
-    
-    // if(req.files != null){
-    //     var imgg = {data: req.files.file.data, contentType: "image/png"};
-    //     // const nest = {email: req.body.Email, name: req.body.Name, lastName: req.body.LastName, birthday: new Date(req.body.Birthday), 
-    //     //     street: req.body.Street, number: req.body.Number, city: req.body.City, image: imgg, activated: "PENDING"};
-    //     const nest = {image: imgg, activated: "PENDING"};
-
-    //     User.findOneAndUpdate({_id: req.body.Id}, nest).then(cc=>{
-    //         return res.status(200).json({"message": "Document successfully changed!"})
-    //     })
-    // }
-    // else{
-    //     const nest1= {email: req.body.Email, name: req.body.Name, lastName: req.body.LastName, birthday: new Date(req.body.Birthaday), 
-    //         street: req.body.Street, number: req.body.Number, city: req.body.City};
-
-    //     User.findOneAndUpdate({_id: req.body.Id}, nest1).then(cc1=>{
-    //         return res.status(200).json({"message": "Profile successfully changed!"})
-    //     })
-    // }
 }
 
 module.exports.register = function(req, res){

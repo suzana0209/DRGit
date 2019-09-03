@@ -28,12 +28,12 @@ var i = 0;
 io.on('connection', (socket)=>{
   socket.on('recive', message => {
     this.stations = message;
-    console.log(this.stations);
-    console.log(`Received message => ${message}`);
+    
+    // console.log(`Received message => ${message}`);
   });
 
   socket.on('send', aa=>{
-    console.log("Stations: ", this.stations);
+    
 
     if(this.stations != []){
       setInterval(() => {
@@ -46,9 +46,9 @@ io.on('connection', (socket)=>{
         value.push(this.stations[i].latitude);
         i++;
 
-        console.log('Emmiting value: ' + value);
+        
         socket.emit('data', {data: value});
-      },5000);
+      },4000);
     }
   })
 })
