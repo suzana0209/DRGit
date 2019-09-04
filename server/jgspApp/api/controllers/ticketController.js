@@ -85,7 +85,7 @@ module.exports.postPayPalModel = function(req,res){
     }
 
     var payPal = new PayPal();
-    payPal.payerEmail = req.body.payerEmail;
+    payPal.payerEmail = req.body.payerEmail; 
     payPal.payerName  = req.body.payerName;
     payPal.payerSurname  = req.body.payerSurname;
     payPal.status  = req.body.status;
