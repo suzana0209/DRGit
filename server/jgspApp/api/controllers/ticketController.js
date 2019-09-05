@@ -128,7 +128,7 @@ module.exports.postPayPalModel = function(req,res){
                     to: req.body.email,
                     subject: 'Ticket purchase',
                             text: 'Dear ' +  req.body.email + ",\nYour purchase is successfull.\n" + "Ticket type : Hourly \n" + 
-                                "Time of purchase: " + dateee + "\nTicket is valid for the next hour.\n\n" + "Thank you."
+                                "Time of purchase: " + (new Date()).toString().split('GMT')[0] + "\nTicket is valid for the next hour.\n\n" + "Thank you."
                     };
                 sendMail(mailOptions);
             }

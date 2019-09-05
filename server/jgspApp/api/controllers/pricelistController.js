@@ -36,7 +36,7 @@ module.exports.addPricelist = function(req,res){
         pricelist.ticketPrices = ticketPrices._id;
         pricelist.save();
 
-        res.status(200).json({"message" : "Pricelist successfully add!"})
+        res.status(200).json({"message" : "Pricelist successfully added!"})
 
     })
 };

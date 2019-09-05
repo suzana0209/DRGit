@@ -99,7 +99,36 @@ module.exports.deleteTimetable = function(req,res){
         return res.status(400).json({ "message": "Don't exist vehicle !"});
     }
 
-    Timetable.findOneAndRemove({_id: req.params._id}).exec().then(tt=>{
-        return res.status(200).json({"message": "Timetable successfully delted!"})
+    Timetable.findById(req.params._id).then(tt=>{
+
+        if(tt == null || tt == undefined){
+            return res.status(404).json({"message": "Timetable doesn't exists!"});
+        }
+        else{
+            Timetable.findOneAndRemove({_id: req.params._id}).then(bla =>{
+            Vehicle.find().then(aa=>{
+                aa.forEach(bb=>{
+                    bb.timetables.forEach(timet=>{
+                        if(timet == req.params._id){
+                            bb.timetables.remove(timet);
+                            Vehicle.findOneAndUpdate({_id: bb._id}, {timetables: bb.timetables}).then(ff=>{});
+                        } 
+                    })
+                })
+                return res.status(200).json({"message": "Timetable successfully deleted!"})
+            })
+        })
+        }
+    
     })
 }
+
+// module.exports.deleteTimetable = function(req,res){
+//     if(!req.params._id){
+//         return res.status(400).json({ "message": "Don't exist vehicle !"});
+//     }
+
+//     Timetable.findOneAndRemove({_id: req.params._id}).exec().then(tt=>{
+//         return res.status(200).json({"message": "Timetable successfully delted!"})
+//     })
+// }

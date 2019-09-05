@@ -76,10 +76,26 @@ module.exports.register = function(req, res){
     if(req.body.userType == 'AppUser' && req.body.passengerType == ""){
         return res.status(400).json({ "message": "You must complete all the fields!"})
     }
-    
 
     if(req.body.password != req.body.confirmPassword){
         return res.status(400).json({"message":"Passwords don't match!"})
+    }
+
+    if(req.body.password.length > 0 && req.body.confirmPassword.length > 0){
+        let b = false;
+        for(x=0;x<req.body.password.length;x++){
+            if(req.body.password.charAt(x) >= 'A' && req.body.password.charAt(x) <= 'Z')
+                b =  true;
+        }
+
+        if(!b){
+            return res.status(400).json({"message": "password must contain at least one uppercase letter"});
+        }
+        
+        
+        
+
+        
     }
 
     if(new Date(req.body.birthday.toString()) >= new Date()){
@@ -155,6 +171,13 @@ module.exports.register = function(req, res){
         });
     }
 };
+
+// function hasUpperLetter(str){
+//     for(x=0;x<str.length;x++)
+//         if(str.charAt(x) >= 'A' && str.charAt(x) <= 'Z')
+//             return true;
+//     return false;
+// }
 
 module.exports.logIn = function(req, res){
     if(!req.body.email || !req.body.password) {
