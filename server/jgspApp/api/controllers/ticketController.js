@@ -69,10 +69,6 @@ module.exports.priceForPaypal = function(req,res){
                 }
          
             })
-
-            //let mm = kk.toString();
-           // var mm = kkk.toString();
-                // res.send(kkk);
         })
     })
 }
@@ -272,18 +268,6 @@ function checkAdult(age) {
         }
     }
 }
-
-
-// function checkAdult(age) {
-//     var today = new Date();
-//     if(age.fromTime.getFullYear() <= today.getFullYear() && age.fromTime.getMonth() <= today.getMonth() && age.fromTime.getDate() <= today.getDate())
-//     {
-//         if(age.toTime.getFullYear() >= today.getFullYear() &&  age.toTime.getMonth() >= today.getMonth() && age.toTime.getDate() >= today.getDate())
-//         {
-//             return age;
-//         }
-//     }
-// }
 
 function sendMail(mailOptions){
     var transporter = nodemailer.createTransport({

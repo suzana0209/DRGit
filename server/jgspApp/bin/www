@@ -28,13 +28,9 @@ var i = 0;
 io.on('connection', (socket)=>{
   socket.on('recive', message => {
     this.stations = message;
-    
-    // console.log(`Received message => ${message}`);
   });
 
   socket.on('send', aa=>{
-    
-
     if(this.stations != []){
       setInterval(() => {
         var value = [];
